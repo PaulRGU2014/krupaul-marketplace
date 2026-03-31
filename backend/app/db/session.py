@@ -1,6 +1,5 @@
 from typing import Generator
 
-from requests import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from app.core.config import settings
