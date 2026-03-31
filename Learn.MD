@@ -341,7 +341,43 @@ This is the repeatable order that keeps the project organized:
 
 This is a strong workflow because each step depends naturally on the one before it.
 
-### 6. Important learning note for this project
+### 6. Sync across local computers
+
+**Will data synchronize if you work on multiple computers?**
+
+The answer depends on whether those computers share the same backend and database.
+
+**The architecture is centralized by design.**
+
+All data lives in a single PostgreSQL database. Any frontend that connects to the same backend automatically reads and writes the same data. There is no special sync mechanism — the shared database *is* the sync.
+
+**When running `docker compose up` on each machine separately:**
+
+Each machine launches its own independent PostgreSQL instance. The data is isolated per machine and is not shared.
+
+**To share data across computers:**
+
+Point every frontend at a single backend. Steps:
+
+1. Choose one machine to run the backend and database (`docker compose up --build`).
+2. Find that machine's local IP (e.g. `192.168.1.50`).
+3. On the host, add each client origin to `ALLOWED_ORIGINS` in `backend/.env`:
+   ```
+   ALLOWED_ORIGINS=["http://localhost:3000","http://192.168.1.50:3000"]
+   ```
+4. On each client machine, create `frontend/.env` from `frontend/.env.example` and set:
+   ```
+   NEXT_PUBLIC_API_URL=http://192.168.1.50:8000
+   ```
+5. Run only the frontend on the client (`npm run dev`).
+
+All clients now share the same database through the shared backend.
+
+**Practical takeaway:**
+
+In this architecture, the backend is the single source of truth. Any computer that points its frontend at the same backend will automatically stay in sync. No polling, no peer-to-peer replication, and no extra tooling is needed.
+
+### 7. Important learning note for this project
 
 The goal here is not to have the system built for you.
 
