@@ -1,13 +1,18 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+
 from app.api.deps import get_db
 from app.models.user import User
 
 router = APIRouter()
 
-@router.get("/") 
 
+def _to_user_summary(user: User) -> dict[str, str | int]:
+    return {"id": user.id, "email": user.email}
+
+
+@router.get("/")
 def list_users(db: Session = Depends(get_db)):
-    users = db.scalars(select(User)).all()
-    return [{"id":u.id, "email":u.email} for u in users]
+    db_users = db.scalars(select(User).order_by(User.id)).all()
+    return [_to_user_summary(user) for user in db_users]
