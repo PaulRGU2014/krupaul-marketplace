@@ -138,3 +138,54 @@ Copy `.env.example` to `.env` in the `backend/` directory and update values as n
 | `SECRET_KEY`                   | `change-me-in-production`                      | JWT signing secret       |
 | `ACCESS_TOKEN_EXPIRE_MINUTES`  | `1440`                                         | Token TTL in minutes     |
 | `ALLOWED_ORIGINS`              | `["http://localhost:3000"]`                    | CORS allowed origins     |
+
+Copy `.env.example` to `.env` in the `frontend/` directory and update values as needed.
+
+| Variable                | Default                   | Description                         |
+|-------------------------|---------------------------|-------------------------------------|
+| `NEXT_PUBLIC_API_URL`   | `http://localhost:8000`   | URL of the backend API              |
+
+## Sync Across Computers
+
+This application stores all data in a single PostgreSQL database. Any computer that connects to the **same backend instance** will see the same data automatically — there is no extra sync step.
+
+**Default local setup** (`docker compose up` on each machine):
+
+Each machine starts its own isolated stack with its own database. Data is not shared between machines in this mode.
+
+**Sharing data across multiple computers:**
+
+Run the backend and database on one machine, then point every other machine's frontend at it.
+
+1. On the **host machine**, start the full stack:
+
+   ```bash
+   cp backend/.env.example backend/.env
+   docker compose up --build
+   ```
+
+2. Find the host machine's local IP address (e.g. `192.168.1.50`).
+
+3. On the **host machine**, add every client's origin to `backend/.env`:
+
+   ```
+   ALLOWED_ORIGINS=["http://localhost:3000","http://192.168.1.50:3000"]
+   ```
+
+   Restart the backend after saving the file.
+
+4. On each **client machine**, copy `frontend/.env.example` to `frontend/.env` and set:
+
+   ```
+   NEXT_PUBLIC_API_URL=http://192.168.1.50:8000
+   ```
+
+5. Start only the frontend on the client machine:
+
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+
+All clients now read from and write to the same database through the shared backend.
