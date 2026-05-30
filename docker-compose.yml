@@ -18,10 +18,10 @@ services:
 
   backend:
     build:
-      context: ./backend
+      context: ./apps/api
     restart: unless-stopped
     env_file:
-      - ./backend/.env
+      - ./apps/api/.env
     environment:
       DATABASE_URL: postgresql://user:password@db:5432/marketplace
     ports:
@@ -30,11 +30,11 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./backend:/app
+      - ./apps/api:/app
 
   frontend:
     build:
-      context: ./frontend
+      context: ./apps/frontend
     restart: unless-stopped
     ports:
       - "3000:3000"

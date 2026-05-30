@@ -5,7 +5,7 @@ A full-stack marketplace application built with **Next.js** (frontend) and **Fas
 ## Docker Prerequisites
 
 - Run Docker commands from the project root: [docker-compose.yml](docker-compose.yml)
-- Make sure [backend/.env.example](backend/.env.example) has been copied to [backend/.env](backend/.env)
+- Make sure [apps/api/.env.example](apps/api/.env.example) has been copied to [apps/api/.env](apps/api/.env)
 - Your user must have permission to access the Docker daemon
 
 ### If Docker was installed with Snap
@@ -64,25 +64,40 @@ docker compose up --build
 
 ```
 .
-├── backend/
-│   ├── app/
-│   │   ├── api/          # Route handlers
-│   │   ├── core/         # Settings & config
-│   │   ├── db/           # DB session & base model
-│   │   ├── models/       # SQLAlchemy models
-│   │   ├── schemas/      # Pydantic schemas
-│   │   └── services/     # Business logic
-│   ├── alembic/          # Database migrations
-│   ├── alembic.ini
-│   ├── requirements.txt
-│   └── Dockerfile
-├── frontend/
-│   ├── app/              # Next.js App Router pages
-│   ├── components/       # Reusable React components
-│   ├── public/           # Static assets
-│   ├── next.config.js
-│   ├── package.json
-│   └── Dockerfile
+├── apps/
+│   ├── api/
+│   │   ├── app/
+│   │   │   ├── api/          # Route handlers
+│   │   │   ├── core/         # Settings & config
+│   │   │   ├── db/           # DB session & base model
+│   │   │   ├── models/       # SQLAlchemy models
+│   │   │   ├── schemas/      # Pydantic schemas
+│   │   │   └── services/     # Business logic
+│   │   ├── alembic/          # Database migrations
+│   │   ├── alembic.ini
+│   │   ├── requirements.txt
+│   │   └── Dockerfile
+│   └── frontend/
+│       ├── app/              # Next.js App Router pages
+│       ├── components/       # Reusable React components
+│       ├── public/           # Static assets
+│       ├── next.config.js
+│       ├── package.json
+│       └── Dockerfile
+│   ├── ai-service/           # AI microservice scaffold
+│   ├── worker/               # Background worker scaffold
+│   └── admin/                # Admin dashboard scaffold
+├── infra/
+│   ├── k8s/
+│   ├── helm/
+│   ├── terraform/
+│   └── docker/
+├── packages/
+│   ├── shared-types/
+│   ├── shared-utils/
+│   └── shared-config/
+├── scripts/
+├── docs/
 └── docker-compose.yml
 ```
 
@@ -91,7 +106,7 @@ docker compose up --build
 ### With Docker (recommended)
 
 ```bash
-cp backend/.env.example backend/.env
+cp apps/api/.env.example apps/api/.env
 docker compose up --build
 ```
 
@@ -99,12 +114,32 @@ docker compose up --build
 - Backend API: http://localhost:8000
 - API Docs (Swagger): http://localhost:8000/docs
 
+### Stopping Docker
+
+If you started with `docker compose up` in the current terminal, press `Ctrl+C` to stop all services.
+
+If containers are running in the background (or from another terminal), run:
+
+```bash
+docker compose down
+```
+
+Optional cleanup:
+
+```bash
+# stop and remove containers + networks + named volumes
+docker compose down -v
+
+# also remove locally built images for this project
+docker compose down --rmi local
+```
+
 ### Local Development
 
 **Backend**
 
 ```bash
-cd backend
+cd apps/api
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload
@@ -113,7 +148,7 @@ uvicorn app.main:app --reload
 **Frontend**
 
 ```bash
-cd frontend
+cd apps/frontend
 npm install
 npm run dev
 ```
@@ -130,7 +165,7 @@ docker compose exec backend alembic upgrade head
 
 ## Environment Variables
 
-Copy `.env.example` to `.env` in the `backend/` directory and update values as needed.
+Copy `.env.example` to `.env` in the `apps/api/` directory and update values as needed.
 
 | Variable                       | Default                                        | Description              |
 |--------------------------------|------------------------------------------------|--------------------------|

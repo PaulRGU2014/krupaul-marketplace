@@ -27,10 +27,22 @@ A normal request flow looks like this:
 
 Docker ties these services together through [docker-compose.yml](docker-compose.yml).
 
+## Monorepo App Roots
+
+After the repository reorganization, the active application roots are:
+
+- Backend app root: [apps/api](apps/api)
+- Frontend app root: [apps/frontend](apps/frontend)
+
+Supporting monorepo framework folders are also present for scale-out work:
+
+- [apps/ai-service](apps/ai-service), [apps/worker](apps/worker), [apps/admin](apps/admin)
+- [infra](infra), [packages](packages), [scripts](scripts), [docs](docs)
+
 ## Backend Structure
 
 ### App startup
-See [backend/app/main.py](backend/app/main.py).
+See [apps/api/app/main.py](apps/api/app/main.py).
 
 This file:
 - creates the FastAPI app
@@ -41,7 +53,7 @@ This file:
 This is the main backend entry point.
 
 ### Settings
-See [backend/app/core/config.py](backend/app/core/config.py).
+See [apps/api/app/core/config.py](apps/api/app/core/config.py).
 
 This file uses `BaseSettings` from `pydantic-settings`.
 
@@ -59,7 +71,7 @@ This is a good place to learn:
 - config management
 
 ### Database session
-See [backend/app/db/session.py](backend/app/db/session.py).
+See [apps/api/app/db/session.py](apps/api/app/db/session.py).
 
 This file:
 - creates the SQLAlchemy engine
@@ -70,7 +82,7 @@ This file:
 This is the core database connection layer.
 
 ### API router
-See [backend/app/api/router.py](backend/app/api/router.py).
+See [apps/api/app/api/router.py](apps/api/app/api/router.py).
 
 This file is where feature routers are connected.
 
@@ -83,9 +95,9 @@ Think of it as the backend URL map.
 
 ### Models, schemas, and services
 Folders:
-- [backend/app/models](backend/app/models)
-- [backend/app/schemas](backend/app/schemas)
-- [backend/app/services](backend/app/services)
+- [apps/api/app/models](apps/api/app/models)
+- [apps/api/app/schemas](apps/api/app/schemas)
+- [apps/api/app/services](apps/api/app/services)
 
 Each folder has a different purpose:
 
@@ -100,7 +112,7 @@ A useful mental model:
 
 ## Python Libraries in This Project
 
-From [backend/requirements.txt](backend/requirements.txt):
+From [apps/api/requirements.txt](apps/api/requirements.txt):
 
 - `fastapi` — web API framework
 - `uvicorn` — server for running FastAPI
@@ -362,7 +374,7 @@ That would involve:
 - `schemas/product.py`
 - `services/product_service.py`
 - `api/endpoints/products.py`
-- registering that router in [backend/app/api/router.py](backend/app/api/router.py)
+- registering that router in [apps/api/app/api/router.py](apps/api/app/api/router.py)
 
 That single feature teaches:
 - Python classes

@@ -1,0 +1,13 @@
+# Local environment files
+.env
+backend/.env
+
+# Python caches
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+backend/.venv/
+backend/venv/
